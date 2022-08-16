@@ -356,7 +356,7 @@ def init():
 		fi = []
 
 	tmp_killtime = datetime.datetime.now().replace(hour=int(5), minute=int(0), second = int(0))
-	kill_Time = datetime.datetime.now()
+	kill_Time = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 
 	if tmp_killtime < kill_Time :
 		kill_Time = tmp_killtime + datetime.timedelta(days=int(1))
@@ -638,7 +638,7 @@ async def dbSave():
 	except Exception as e :
 		print ('save error!!')
 		print(e.args[1]['message']) # output: This repository is empty.
-		errortime = datetime.datetime.now()
+		errortime = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 		print (errortime)
 		pass
 
@@ -832,7 +832,7 @@ async def init_data_list(filename, first_line : str = "-----------"):
 	except Exception as e :
 		print ('save error!!')
 		print(e.args[1]['message']) # output: This repository is empty.
-		errortime = datetime.datetime.now()
+		errortime = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 		print (errortime)
 		pass
 
@@ -849,7 +849,7 @@ async def data_list_Save(filename, first_line : str = "-----------",  save_data 
 	except Exception as e :
 		print ('save error!!')
 		print(e.args[1]['message']) # output: This repository is empty.
-		errortime = datetime.datetime.now()
+		errortime = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 		print (errortime)
 		pass
 
@@ -1063,28 +1063,30 @@ class taskCog(commands.Cog):
 					if int(basicSetting[1]) == 0:
 						fixed_bossFlag[i] = True
 					################ before_alert1 ################ 
-					if fixed_bossTime[i] <= priv0 and fixed_bossTime[i] > priv:
-						if basicSetting[3] != '0':
-							if fixed_bossFlag0[i] == False:
-								fixed_bossFlag0[i] = True
-								await self.bot.get_channel(channel).send("```" + fixed_bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + fixed_bossData[i][3] +' [' +  fixed_bossTime[i].strftime('%H:%M:%S') + ']```', tts=False)
-								try:
-									if basicSetting[21] == "1":
-										await PlaySound(self.bot.voice_clients[0], './sound/' + fixed_bossData[i][0] + '알림1.mp3')
-								except:
-									pass
+					if basicSetting[3] != '0' and fixed_bossFlag0[i] == False:
+						if fixed_bossTime[i] <= priv0 and fixed_bossTime[i] > priv:
+							fixed_bossFlag0[i] = True
+							await self.bot.get_channel(channel).send("```" + fixed_bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + fixed_bossData[i][3] +' [' +  fixed_bossTime[i].strftime('%H:%M:%S') + ']```', tts=False)
+							try:
+								if basicSetting[21] == "1":
+									await PlaySound(self.bot.voice_clients[0], './sound/' + fixed_bossData[i][0] + '알림1.mp3')
+							except:
+								pass
+					else:
+						fixed_bossFlag0[i] = True
 
 					################ before_alert ################ 
-					if fixed_bossTime[i] <= priv and fixed_bossTime[i] > now and fixed_bossFlag0[i] == True :
-						if basicSetting[1] != '0' :
-							if fixed_bossFlag[i] == False:
-								fixed_bossFlag[i] = True
-								await self.bot.get_channel(channel).send("```" + fixed_bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + fixed_bossData[i][3] +' [' +  fixed_bossTime[i].strftime('%H:%M:%S') + ']```', tts=False)
-								try:
-									if basicSetting[21] == "1":
-										await PlaySound(self.bot.voice_clients[0], './sound/' + fixed_bossData[i][0] + '알림.mp3')
-								except:
-									pass
+					if basicSetting[1] != '0' and fixed_bossFlag[i] == False:
+						if fixed_bossTime[i] <= priv and fixed_bossTime[i] > now and fixed_bossFlag0[i] == True :
+							fixed_bossFlag[i] = True
+							await self.bot.get_channel(channel).send("```" + fixed_bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + fixed_bossData[i][3] +' [' +  fixed_bossTime[i].strftime('%H:%M:%S') + ']```', tts=False)
+							try:
+								if basicSetting[21] == "1":
+									await PlaySound(self.bot.voice_clients[0], './sound/' + fixed_bossData[i][0] + '알림.mp3')
+							except:
+								pass
+					else:
+						fixed_bossFlag[i] = True
 					
 					################ 보스 젠 시간 확인 ################
 					if fixed_bossTime[i] <= now and fixed_bossFlag[i] == True and fixed_bossFlag0[i] == True :
@@ -1109,34 +1111,36 @@ class taskCog(commands.Cog):
 					if int(basicSetting[1]) == 0:
 						bossFlag[i] = True
 					################ before_alert1 ################ 
-					if bossTime[i] <= priv0 and bossTime[i] > priv:
-						if basicSetting[3] != '0':
-							if bossFlag0[i] == False:
-								bossFlag0[i] = True
-								if bossData[i][6] != '' :
-									await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]" + '\n<' + bossData[i][6] + '>```', tts=False)
-								else :
-									await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]```", tts=False)
-								try:
-									if basicSetting[21] == "1":
-										await PlaySound(self.bot.voice_clients[0], './sound/' + bossData[i][0] + '알림1.mp3')
-								except:
-									pass
+					if basicSetting[3] != '0' and bossFlag0[i] == False:
+						if bossTime[i] <= priv0 and bossTime[i] > priv:
+							bossFlag0[i] = True
+							if bossData[i][6] != '' :
+								await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]" + '\n<' + bossData[i][6] + '>```', tts=False)
+							else :
+								await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]```", tts=False)
+							try:
+								if basicSetting[21] == "1":
+									await PlaySound(self.bot.voice_clients[0], './sound/' + bossData[i][0] + '알림1.mp3')
+							except:
+								pass
+					else:
+						bossFlag0[i] = True
 
 					################ before_alert ################
-					if bossTime[i] <= priv and bossTime[i] > now and bossFlag0[i] == True:
-						if basicSetting[1] != '0' :
-							if bossFlag[i] == False:
-								bossFlag[i] = True
-								if bossData[i][6] != '' :
-									await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]" + '\n<' + bossData[i][6] + '>```', tts=False)
-								else :
-									await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]```", tts=False)
-								try:
-									if basicSetting[21] == "1":
-										await PlaySound(self.bot.voice_clients[0], './sound/' + bossData[i][0] + '알림.mp3')
-								except:
-									pass
+					if basicSetting[1] != '0' and bossFlag[i] == False:
+						if bossTime[i] <= priv and bossTime[i] > now and bossFlag0[i] == True:
+							bossFlag[i] = True
+							if bossData[i][6] != '' :
+								await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]" + '\n<' + bossData[i][6] + '>```', tts=False)
+							else :
+								await self.bot.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + " [" +  bossTimeString[i] + "]```", tts=False)
+							try:
+								if basicSetting[21] == "1":
+									await PlaySound(self.bot.voice_clients[0], './sound/' + bossData[i][0] + '알림.mp3')
+							except:
+								pass
+					else:
+						bossFlag[i] = True
 
 					################ 보스 젠 시간 확인 ################ 
 					if bossTime[i] <= now and bossFlag0[i] == True and bossFlag[i] == True :
@@ -3690,9 +3694,9 @@ class mainCog(commands.Cog):
 
 		for i in range(bossNum):
 			if bossData[i][0] in boss_data_dict:
-				curr_now = datetime.datetime.now()
-				now2 = datetime.datetime.now()
-				tmp_now = datetime.datetime.now()
+				curr_now = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
+				now2 = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
+				tmp_now = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 				tmp_now = tmp_now.replace(hour=int(boss_data_dict[bossData[i][0]]["hour"]), minute=int(boss_data_dict[bossData[i][0]]["minute"]), second=int(boss_data_dict[bossData[i][0]]["second"]))
 					
 				bossFlag[i] = False
@@ -3762,8 +3766,8 @@ class mainCog(commands.Cog):
 
 		for i in range(bossNum):
 			if bossData[i][0] in boss_data_dict:
-				now2 = datetime.datetime.now()
-				tmp_now = datetime.datetime.now()
+				now2 = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
+				tmp_now = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 				tmp_now = tmp_now.replace(hour=int(boss_data_dict[bossData[i][0]]["hour"]), minute=int(boss_data_dict[bossData[i][0]]["minute"]), second=int(boss_data_dict[bossData[i][0]]["second"]))
 					
 				bossFlag[i] = False
@@ -3817,9 +3821,9 @@ class mainCog(commands.Cog):
 
 		for i in range(bossNum):
 			if bossData[i][0] in boss_name_list:
-				curr_now = datetime.datetime.now()
-				now2 = datetime.datetime.now()
-				tmp_now = datetime.datetime.now()
+				curr_now = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
+				now2 = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
+				tmp_now = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 				tmp_now = tmp_now.replace(hour=int(input_hour), minute=int(input_minute), second=0) + datetime.timedelta(hours=int(input_delta_time))
 					
 				bossFlag[i] = False
@@ -3848,7 +3852,7 @@ class mainCog(commands.Cog):
 					bossFlag0[i] = True
 				result_boss_name.append(bossData[i][0])
 					
-		return await ctx.send(f"```[{', '.join(list(result_boss_name))}] 보스 [추가등록]이 완료되었습니다. [{command[27][0]}]으로 등록시간을 확인해보세요```", tts=False)
+		return await ctx.send(f"```[{', '.join(list(result_boss_name))}] 보스 [추가등록]이 완료되었습니다. [{command[22][0]}]으로 등록시간을 확인해보세요```", tts=False)
 
 	################ ?????????????? ################ 
 	@commands.command(name='!오빠')
